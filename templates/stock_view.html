@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ company }} - {{ period }}</title>
+</head>
+<body>
+    <h1>Stock Data for {{ company }} ({{ period }})</h1>
+    <table border="1">
+        <tr>
+            <th>Date</th>
+            <th>RSI</th>
+            <th>Price</th>
+        </tr>
+        {% for stock in stocks %}
+        <tr>
+            <td>{{ stock.Date }}</td>
+            <td>{{ stock.RSI }}</td>
+            <td>{{ stock.Price }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

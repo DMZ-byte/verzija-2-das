@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2>Stock Analysis</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Last Price</th>
+                <th>SMA</th>
+                <th>EMA</th>
+                <th>RSI</th>
+                <th>Signal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ row.date }}</td>
+                <td>{{ row.last_transaction_price }}</td>
+                <td>{{ row.SMA }}</td>
+                <td>{{ row.EMA }}</td>
+                <td>{{ row.RSI }}</td>
+                <td>{{ row.Signal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
