@@ -2,31 +2,56 @@
 {% block content %}
 <h2>Stock Market Data</h2>
 <div>
-    {% for stock in data_html %}
+    {# Each "contact" is a Contact model object. #}
     <table>
+    <thead>
+    <th>Company code</th>
+    <th>date</th>
+    <th>last_transaction_price</th>
+    <th>max_price</th>
+    <th>min_price</th>
+    <th>Average Price</th>
+    <th>Trading Volume</th>
+    <th>Total Trading Volume</th>
+
+
+    </thead>
+    <tbody>
+    {% for stock in page_obj %}
         <tr>
-            <td>{{data_html |safe }}</td>
+        <td>{{ stock.company_code }}</td>
+        <td>{{ stock.date }}</td>
+        <td>{{ stock.last_transaction }}</td>
+        <td>{{ stock.max_price }}</td>
+        <td>{{ stock.min_price }}</td>
+        <td>{{ stock.average_price }}</td>
+        <td>{{ stock.trading_volume_best }}</td>
+        <td>{{ stock.total_trading_volume }}</td>
         </tr>
-    </table>
+
     {% endfor %}
+
+
+    </tbody>
+    </table>
+    <br>
+
+</div>
+    <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
 </div>
 {% endblock %}
-
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; First</a>
-                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-            {% endif %}
-
-            <span class="current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">Next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
-

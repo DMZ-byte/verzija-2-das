@@ -1,28 +1,130 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="container">
     <h2>Stock Analysis</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Date</th>
+ <form method="get" class="timeframe-form">
+        <label for="timeframe">Select Timeframe:</label>
+        <select name="timeframe" id="timeframe" onchange="this.form.submit()">
+            <option value="daily" {% if selected_timeframe == 'daily' %}selected{% endif %}>1 Day</option>
+            <option value="weekly" {% if selected_timeframe == 'weekly' %}selected{% endif %}>1 Week</option>
+            <option value="monthly" {% if selected_timeframe == 'monthly' %}selected{% endif %}>1 Month</option>
+        </select>
+         <label for="company">Select Company:</label>
+            <select name="company" id="company" onchange="this.form.submit()">
+                <option value="">Select a company</option>
+                {% for company in companies %}
+                    <option value="{{ company }}" {% if selected_company == company %}selected{% endif %}>{{ company }}</option>
+                {% endfor %}
+            </select>
+            <noscript><input type="submit" value="Go"></noscript>
+                <noscript><input type="submit" value="Go"></noscript>
+ </form>
+<!--<form method="get" class="company-form">
+
+</form>-->
+
+<h1>{{ selected_company }}</h1>
+
+    <table class="table table-striped" style="margin: 0 auto;text-align: center;padding: 10px;border: 1px solid #ddd;border-collapse: collapse;table-layout: fixed;width: 100%;">
+
+
+                <!--<th>Date</th>
                 <th>Last Price</th>
                 <th>SMA</th>
                 <th>EMA</th>
                 <th>RSI</th>
                 <th>Signal</th>
+
+                <th>RSI and SMA</th>
+                <th>RSI and SMA-Signal</th>
+                <th>Stochastic and EMA</th>
+                <th>Stochastic and EMA-Signal</th>
+                <th>CCI and WMA</th>
+                <th>CCI and WMA-Signal</th>
+                <th>ADX and TEMA</th>
+                <th>ADX and TEMA-Signal</th>
+                <th>ROC and MADC</th>
+                -->
+
+              <!--  <th>ROC and MACD-Signal</th> -->
+        <thead class="thead-light">
+            <tr>
+                <th colspan="5">Oscillators</th>
+                <th colspan="5">Moving Averages</th>
             </tr>
         </thead>
         <tbody>
-            {% for row in data %}
-            <tr>
+        <tr>
+                    <td style="">RSI and RSI - signal</td>
+                    <td style=" ">Stochastic_K and Stochastic_K Signal</td>
+                    <td style=""> CCI and CCI signal</td>
+                    <td style="">ADX and ADX signal</td>
+                    <td style=""> ROC and ROC signal</td>
+                    <td style="">SMA and SMA signal</td>
+                    <td style="">EMA and EMA signal</td>
+                    <td style=" ">WMA and WMA signal</td>
+                    <td style="">TEMA and TEMA signal</td>
+                    <td style="">MACD and MADC signal</td>
+                </tr>
+            {% for record in data %}
+           <!-- <tr>
                 <td>{{ row.date }}</td>
                 <td>{{ row.last_transaction_price }}</td>
                 <td>{{ row.SMA }}</td>
                 <td>{{ row.EMA }}</td>
                 <td>{{ row.RSI }}</td>
                 <td>{{ row.Signal }}</td>
-            </tr>
+            </tr>-->
+
+
+                <tr>
+                    <td>{{ record.RSI|floatformat:2  }} - {% if record.RSI_signal == 'Buy' %} <p class="buy-text">Buy</p>
+                                {% else %}
+                                <p class="sell-text">Sell</p>
+                                {% endif %}</td>
+                    <td>{{ record.Stochastic_K|floatformat:2 }} - {% if record.Stochastic_K_signal == 'Buy' %}  <p class="buy-text">Buy</p>
+                                {% else %}
+                                <p class="sell-text">Sell</p>
+                                {% endif %} </td>
+                    <td>{{ record.CCI|floatformat:2 }} - {% if record.CCI_signal == 'Buy' %}  <p class="buy-text">Buy</p>
+                                {% else %}
+                                <p class="sell-text">Sell</p>
+                                {% endif %}</td>
+                    <td>{{ record.ADX|floatformat:2 }} - {% if record.ADX_signal == 'Buy' %} <p class="buy-text">Buy</p>
+                                {% else %}
+                                <p class="sell-text">Sell</p>
+                                {% endif %} </td>
+                    <td>{{ record.ROC|floatformat:2 }} - {% if record.ROC_signal == 'Buy' %}  <p class="buy-text">Buy</p>
+                                {% else %}
+                                <p class="sell-text">Sell</p>
+                                {% endif %} </td>
+                    <td>{{ record.SMA|floatformat:2 }} - {% if record.SMA_signal %}  }}<p class="buy-text">Buy</p>
+                                {% else %}
+                                <p class="sell-text">Sell</p>
+                                {% endif %}</td>
+                    <td>{{ record.EMA|floatformat:2 }} - {% if record.EMA_signal %}
+                        <p class="buy-text">Buy</p>
+                                {% else %}
+                                <p class="sell-text">Sell</p>
+                                {% endif %}
+</td>
+                    <td>{{ record.WMA|floatformat:2 }} - {%if record.WMA_signal %}<p class="buy-text">Buy</p>
+                                {% else %}
+                                <p class="sell-text">Sell</p>
+                                {% endif %}</td>
+
+                    <td>{{ record.TEMA|floatformat:2 }} - {% if record.TEMA_signal %}<p class="buy-text">Buy</p>
+                                {% else %}
+                                <p class="sell-text">Sell</p>
+                                {% endif %}</td>
+                    <td>{{ record.MACD|floatformat:2 }} - {% if record.MACD_signal%}  }}<p class="buy-text">Buy</p>
+{% else %}
+    <p class="sell-text">Sell</p>
+{% endif %} </td>
+
+                </tr>
+
             {% endfor %}
         </tbody>
     </table>

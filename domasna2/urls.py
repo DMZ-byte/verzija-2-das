@@ -23,9 +23,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('stocks/<str:company>/<str:period>/', views.stock_view, name='stock_view'),
-    path('', views.home, name='home'),
-    path('upload/',views.upload_data,name='upload_csv'),
+    path('stocks/<str:company>/<str:period>/', views.Stock_view, name='stock_view'),
+    path('', views.home_page, name='home'),
+    path('upload/',views.upload_data,name='upload_data'),
     path('visualization/',views.data_visualization,name='visualization'),
     path('analysis/',views.analyze_stock,name='analysis')
 ]
