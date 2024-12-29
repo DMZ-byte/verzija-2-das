@@ -5,6 +5,7 @@ from ta.trend import SMAIndicator,MACD, EMAIndicator, WMAIndicator, CCIIndicator
 
 def calculate_indicators(data):
     # Moving averages
+    data = data[['last_transaction_price', 'max_price', 'min_price', 'average_price']].fillna(method='ffill')
     data['SMA'] = SMAIndicator(data['last_transaction_price'], window=7).sma_indicator()
     data['EMA'] = EMAIndicator(data['last_transaction_price'], window=7).ema_indicator()
     data['WMA'] = WMAIndicator(data['last_transaction_price'], window=7).wma()
@@ -43,6 +44,7 @@ def generate_signals(data):
 
 
 def determine_signals(data):
+    sum = 0
     # RSI Buy/Sell Signal
     data['RSI_signal'] = data['RSI'].apply(lambda x: 'Buy' if x < 30 else 'Sell' if x > 70 else 'Neutral')
 

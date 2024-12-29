@@ -118,7 +118,7 @@
                                 {% else %}
                                 <p class="sell-text">Sell</p>
                                 {% endif %}</td>
-                    <td>{{ record.MACD|floatformat:2 }} - {% if record.MACD_signal%}  }}<p class="buy-text">Buy</p>
+                    <td>{{ record.MACD|floatformat:2 }} - {% if record.MACD_signal%}  <p class="buy-text">Buy</p>
 {% else %}
     <p class="sell-text">Sell</p>
 {% endif %} </td>

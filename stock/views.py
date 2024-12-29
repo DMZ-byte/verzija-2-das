@@ -108,6 +108,7 @@ def analyze_stock(request):
         data[column] = pd.to_numeric(data[column], errors='coerce')
 
     # Drop rows with any NaN values
+
     data = data.dropna(subset=numeric_columns)
     data = data.fillna(0)
 
@@ -127,7 +128,12 @@ def analyze_stock(request):
             return HttpResponse(f"An error occurred: {e}", status=500)
         resample = calculate_indicators(resample)
         resample = determine_signals(resample)
-
+        #resample = resample.dropna()
+        print("Before indicators:")
+        print(resample.head())
+        print("Missing values:")
+        print(resample.isnull().sum())
+        resample = resample.fillna(method='ffill').fillna(method='bfill')
         resample.reset_index(inplace=True)
     else:
         resample = pd.DataFrame()
