@@ -7,7 +7,10 @@ from django.core.paginator import Paginator
 import csv
 from django.shortcuts import render
 from .utils import calculate_indicators, determine_signals, filter_data_by_period, load_csv
-from .utils import normalize_numeric
+from .utils import normalize_numeric, create_candlestick_plot
+from datetime import datetime, timedelta
+import mplfinance as mpf
+import plotly.graph_objects as go
 
 companies = ['ADIN', 'ALK', 'ALKB', 'AMBR', 'AMEH', 'APTK', 'ATPP', 'AUMK', 'BANA', 'BGOR', 'BIKF', 'BIM', 'BLTU',
              'CBNG', 'CDHV', 'CEVI', 'CKB', 'CKBKO', 'DEBA', 'DIMI', 'EDST', 'ELMA', 'ELNC', 'ENER', 'ENSA', 'EUHA',
@@ -45,9 +48,10 @@ def home_page(request):
         paginator = Paginator(data, 25)
         page_number = request.GET.get("page")
         page_object = paginator.get_page(page_number)
+        return render(request, 'home.html', {'page_obj': page_object})
     else:
         page_object = "<p>No data uploaded</p>"
-    return render(request, 'home.html', {'page_obj': page_object})
+        return render(request, 'home.html', {'page_obj': page_object})
 
 
 def upload_csv(request):
@@ -84,7 +88,30 @@ def upload_data(request):
 
 
 def data_visualization(request):
-    return render(request, 'data_visualization.html')
+    selected_company = request.GET.get('company')
+    selected_timeframe = request.GET.get("timeframe", "daily")
+    company_code = request.GET.get('company', 'ADIN')
+    timeframe = request.GET.get('timeframe', '1y')
+    end_date = datetime.now()
+    if timeframe == '1y':
+        start_date = end_date - timedelta(days=365)
+    elif timeframe == '1w':
+        start_date = end_date - timedelta(days=1)
+    elif timeframe == '1d':
+        start_date = end_date - timedelta(days=1)
+    else:
+        start_date = None
+    queryset = StockData.objects.filter(company_code=company_code)
+    if start_date:
+        queryset = queryset.filter(date__range=(start_date, end_date))
+    data = pd.DataFrame.from_records(queryset.values())
+    if data.empty:
+        return render(request, "data_visualization.html", {"error": "No data available for the selected filters."})
+    plot_html = create_candlestick_plot(data)
+
+    return render(request, 'data_visualization.html',{"plot_html": plot_html,"selected_timeframe": selected_timeframe,
+                   "companies": companies,
+                   "selected_company": selected_company})
 
 
 def analyze_stock(request):
@@ -116,8 +143,8 @@ def analyze_stock(request):
         data['date'] = pd.to_datetime(data['date'])
         data.set_index('date',inplace=True)
         #uses selected timeframe
-        print(data.head())  # Debug: Inspect the data
-        print(data.dtypes)  # Debug: Check column types
+        print(data.head())  # Debug
+        print(data.dtypes)  # Debug:
 
         try:
             # Select only numeric columns for resampling

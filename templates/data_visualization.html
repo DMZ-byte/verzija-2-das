@@ -2,4 +2,29 @@
 {% block content %}
 <h2>Data Visualization</h2>
 <p>Graphs and visualizations will go here.</p>
+ <form method="get" class="timeframe-form">
+        <label for="timeframe">Select Timeframe:</label>
+        <select name="timeframe" id="timeframe" onchange="this.form.submit()">
+            <option value="daily" {% if selected_timeframe == 'daily' %}selected{% endif %}>1 Day</option>
+            <option value="weekly" {% if selected_timeframe == 'weekly' %}selected{% endif %}>1 Week</option>
+            <option value="monthly" {% if selected_timeframe == 'monthly' %}selected{% endif %}>1 Month</option>
+        </select>
+         <label for="company_code">Select Company:</label>
+            <select name="company" id="company" onchange="this.form.submit()">
+                <option value="">Select a company</option>
+                {% for company in companies %}
+                    <option value="{{ company }}" {% if selected_company == company %}selected{% endif %}>{{ company }}</option>
+                {% endfor %}
+            </select>
+            <noscript><input type="submit" value="Go"></noscript>
+                <noscript><input type="submit" value="Go"></noscript>
+ </form>
+<div id="chart" style="height: 600px;">
+    {% if plot_html %}
+        <!--<img src="data:image/png;base64,chart" alt="Stock Candlestick" style="height: 100%;width: 100%;"/>-->
+        <div>{{ plot_html|safe }}</div>
+    {% elif not chart %}
+        <p class="text-red">Invalid stock or data not available.</p>
+    {% endif %}
+</div>
 {% endblock %}

@@ -1,7 +1,7 @@
 import pandas as pd
 from ta.momentum import RSIIndicator, StochasticOscillator, ROCIndicator
 from ta.trend import SMAIndicator,MACD, EMAIndicator, WMAIndicator, CCIIndicator, ADXIndicator
-
+import plotly.graph_objects as go
 
 def calculate_indicators(data):
     # Moving averages
@@ -42,7 +42,24 @@ def generate_signals(data):
     data.loc[data['RSI'] > 70, 'Signal'] = 'Sell'
     return data
 
-
+def create_candlestick_plot(dataframe):
+    data = dataframe.sort_values(by='date', ascending=False)
+    fig = go.Figure(data = [
+        go.Candlestick(
+            x=data['date'],
+            open=data['last_transaction_price'],
+            high=data['max_price'],
+            low=data['min_price'],
+            close=data['last_transaction_price']
+        )
+    ])
+    fig.update_layout(
+        title = 'Candlestick Plot',
+        xaxis_title = 'Date',
+        yaxis_title = 'Price',
+        xaxis_rangeslider_visible = False
+    )
+    return fig.to_html(full_html=False)
 def determine_signals(data):
     sum = 0
     # RSI Buy/Sell Signal
