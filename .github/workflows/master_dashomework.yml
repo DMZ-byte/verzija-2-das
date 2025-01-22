@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - dashomework
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to registry
+      uses: docker/login-action@v2
+      with:
+        registry: https://verzija2das.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_151a7da8024748d19ed868c58f7f5365 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_02143024ae6c4a98b69e2344217d54b2 }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: verzija2das.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_151a7da8024748d19ed868c58f7f5365 }}/verzija-2-das:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'dashomework'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_257628464abe412d8981460741fb368b }}
+        images: 'verzija2das.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_151a7da8024748d19ed868c58f7f5365 }}/verzija-2-das:${{ github.sha }}'
